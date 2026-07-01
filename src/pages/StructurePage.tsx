@@ -84,7 +84,7 @@ export default function StructurePage() {
       <div className="structure__inner">
         <div className="structure__intro">
           <p className="structure__lead">
-            Model organizacji Grantland w formie czytelnego konspektu. Ten sam zestaw danych zasila
+            Model organizacji GO ON [OFF] SHORE w formie czytelnego konspektu. Ten sam zestaw danych zasila
             interaktywną <strong>Mapę</strong> — edytuj, dodawaj i usuwaj elementy tutaj, a zmiany od razu
             pojawią się na mapie.
           </p>

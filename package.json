@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Wizualizacja architektury organizacji Grantland — interaktywna mapa w stylu Obsidian (CRM, konta, działy, warstwa AI).",
+  "description": "Wizualizacja architektury organizacji GO ON [OFF] SHORE — interaktywna mapa w stylu Obsidian (CRM, konta, działy, warstwa AI).",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

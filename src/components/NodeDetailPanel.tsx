@@ -18,7 +18,7 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
     return (
       <section className="detail">
         <div className="detail__empty">
-          <strong>Mapa organizacji Grantland</strong>
+          <strong>Mapa organizacji GO ON [OFF] SHORE</strong>
           Kliknij dowolny węzeł, aby zobaczyć szczegóły, powiązania i rolę w systemie.
           Użyj legendy po lewej, aby filtrować warstwy.
         </div>
