@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { CATEGORIES, type CategoryId } from '../data/categories';
-import { NODES } from '../data/organization';
+import { useOrgData } from '../state/OrgDataContext';
 
 interface Props {
   active: Set<CategoryId>;
@@ -8,15 +9,21 @@ interface Props {
   onFit: () => void;
 }
 
-const COUNTS: Record<string, number> = NODES.reduce(
-  (acc, n) => {
-    acc[n.category] = (acc[n.category] ?? 0) + 1;
-    return acc;
-  },
-  {} as Record<string, number>,
-);
-
 export default function Legend({ active, onToggle, onAll, onFit }: Props) {
+  const { nodes } = useOrgData();
+
+  const counts = useMemo(
+    () =>
+      nodes.reduce(
+        (acc, n) => {
+          acc[n.category] = (acc[n.category] ?? 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+    [nodes],
+  );
+
   return (
     <aside className="legend">
       <p className="legend__title">Warstwy · filtr</p>
@@ -35,7 +42,7 @@ export default function Legend({ active, onToggle, onAll, onFit }: Props) {
               <br />
               <span className="legend__desc">{c.description}</span>
             </span>
-            <span className="legend__count">{COUNTS[c.id] ?? 0}</span>
+            <span className="legend__count">{counts[c.id] ?? 0}</span>
           </button>
         );
       })}

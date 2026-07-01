@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { CATEGORY_MAP } from '../data/categories';
-import { LINKS, NODE_MAP, type OrgNode } from '../data/organization';
+import type { OrgNode } from '../data/organization';
+import { useOrgData, type NodeInput } from '../state/OrgDataContext';
+import NodeEditDialog from './NodeEditDialog';
 
 interface Props {
   node: OrgNode | null;
@@ -7,17 +10,10 @@ interface Props {
   onClose: () => void;
 }
 
-/** Zwraca wszystkie węzły połączone z danym (dowolnym rodzajem połączenia). */
-function connectionsOf(id: string): OrgNode[] {
-  const ids = new Set<string>();
-  for (const l of LINKS) {
-    if (l.source === id) ids.add(l.target);
-    else if (l.target === id) ids.add(l.source);
-  }
-  return [...ids].map((i) => NODE_MAP[i]).filter(Boolean);
-}
-
 export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
+  const { nodes, connectionsOf, parentIdOf, updateNode, deleteNode } = useOrgData();
+  const [editing, setEditing] = useState(false);
+
   if (!node) {
     return (
       <section className="detail">
@@ -33,6 +29,23 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
   const meta = CATEGORY_MAP[node.category];
   const connections = connectionsOf(node.id);
 
+  function handleSave(input: NodeInput) {
+    updateNode(node!.id, input);
+    setEditing(false);
+  }
+
+  function handleDelete() {
+    const count = connections.length;
+    const warning =
+      count > 0
+        ? `Element „${node!.label}” ma ${count} powiązań, które również zostaną usunięte. Kontynuować?`
+        : `Usunąć element „${node!.label}”?`;
+    if (window.confirm(warning)) {
+      deleteNode(node!.id);
+      onClose();
+    }
+  }
+
   return (
     <section className="detail">
       <button className="detail__close" onClick={onClose} aria-label="Zamknij">
@@ -45,6 +58,14 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
         </span>
         <h2 className="detail__title">{node.label}</h2>
         <p className="detail__summary">{node.summary}</p>
+        <div className="detail__edit-actions">
+          <button className="icon-btn" onClick={() => setEditing(true)} title="Edytuj element">
+            ✎ Edytuj
+          </button>
+          <button className="icon-btn icon-btn--danger" onClick={handleDelete} title="Usuń element">
+            ✕ Usuń
+          </button>
+        </div>
       </div>
       <div className="detail__body">
         {node.details && node.details.length > 0 && (
@@ -78,6 +99,17 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
           </>
         )}
       </div>
+
+      {editing && (
+        <NodeEditDialog
+          mode="edit"
+          node={node}
+          initialParentId={parentIdOf(node.id)}
+          allNodes={nodes}
+          onSubmit={handleSave}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </section>
   );
 }

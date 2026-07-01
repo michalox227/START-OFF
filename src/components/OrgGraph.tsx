@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { CATEGORY_MAP, type CategoryId } from '../data/categories';
-import { LINKS, NODES, type OrgLink, type OrgNode } from '../data/organization';
+import type { OrgLink, OrgNode } from '../data/organization';
 import { useMeasure } from '../hooks/useMeasure';
+import { useOrgData } from '../state/OrgDataContext';
 
 type GraphNode = OrgNode & { x?: number; y?: number };
 
@@ -12,13 +13,29 @@ interface Props {
   onSelect: (id: string | null) => void;
   /** Sygnał z zewnątrz (np. przycisk „Dopasuj widok”). */
   fitSignal: number;
+  /** Skala 1–5: jak daleko od siebie mają być rozmieszczone obiekty. */
+  distanceLevel: number;
+  /** Skala 1–5: rozmiar napisów przy węzłach. */
+  labelLevel: number;
 }
+
+// Mnożniki dla 5-stopniowej skali suwaków (indeks = poziom - 1).
+const DISTANCE_SCALE = [0.55, 0.8, 1, 1.35, 1.8];
+const LABEL_SCALE = [0.65, 0.85, 1, 1.25, 1.55];
 
 function radiusFor(level: number): number {
   return level >= 3 ? 7 : level >= 2 ? 5 : 3.4;
 }
 
-export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSignal }: Props) {
+export default function OrgGraph({
+  activeCategories,
+  selectedId,
+  onSelect,
+  fitSignal,
+  distanceLevel,
+  labelLevel,
+}: Props) {
+  const { nodes: allNodes, links: allLinks } = useOrgData();
   const { ref, width, height } = useMeasure<HTMLDivElement>();
   const fgRef = useRef<any>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -26,25 +43,25 @@ export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSi
 
   // Dane grafu przefiltrowane po aktywnych kategoriach.
   const graphData = useMemo(() => {
-    const visible = NODES.filter((n) => activeCategories.has(n.category));
+    const visible = allNodes.filter((n) => activeCategories.has(n.category));
     const ids = new Set(visible.map((n) => n.id));
-    const links = LINKS.filter((l) => ids.has(l.source) && ids.has(l.target)).map((l) => ({
+    const links = allLinks.filter((l) => ids.has(l.source) && ids.has(l.target)).map((l) => ({
       ...l,
     }));
     // Kopie węzłów, aby symulacja nie mutowała współdzielonych obiektów.
     return { nodes: visible.map((n) => ({ ...n })) as GraphNode[], links };
-  }, [activeCategories]);
+  }, [allNodes, allLinks, activeCategories]);
 
   // Mapa sąsiedztwa do podświetlania powiązań.
   const adjacency = useMemo(() => {
     const map = new Map<string, Set<string>>();
-    for (const n of NODES) map.set(n.id, new Set());
-    for (const l of LINKS) {
+    for (const n of allNodes) map.set(n.id, new Set());
+    for (const l of allLinks) {
       map.get(l.source)?.add(l.target);
       map.get(l.target)?.add(l.source);
     }
     return map;
-  }, []);
+  }, [allNodes, allLinks]);
 
   const focusId = hoverId ?? selectedId;
   const highlightNodes = useMemo(() => {
@@ -64,13 +81,22 @@ export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSi
     [highlightNodes],
   );
 
-  // Konfiguracja sił — układ zbliżony do grafu Obsidian.
+  // Konfiguracja sił — układ zbliżony do grafu Obsidian, skalowany suwakiem odległości.
+  const isFirstDistanceRun = useRef(true);
   useEffect(() => {
     const fg = fgRef.current;
     if (!fg) return;
-    fg.d3Force('charge')?.strength(-160).distanceMax(320);
-    fg.d3Force('link')?.distance((l: OrgLink) => (l.kind === 'ai' ? 70 : 52));
-  }, []);
+    const scale = DISTANCE_SCALE[distanceLevel - 1] ?? 1;
+    fg.d3Force('charge')?.strength(-160 * scale).distanceMax(320 * scale);
+    fg.d3Force('link')?.distance((l: OrgLink) => (l.kind === 'ai' ? 70 : 52) * scale);
+    if (isFirstDistanceRun.current) {
+      isFirstDistanceRun.current = false;
+      return;
+    }
+    // Po zmianie suwaka — rozgrzej symulację i dopasuj widok, gdy się ustabilizuje.
+    needFit.current = true;
+    fg.d3ReheatSimulation?.();
+  }, [distanceLevel]);
 
   // Po każdej zmianie danych — dopasuj widok przy kolejnym zatrzymaniu silnika.
   useEffect(() => {
@@ -102,6 +128,7 @@ export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSi
       const dim = highlightNodes ? !highlightNodes.has(node.id) : false;
       const x = node.x ?? 0;
       const y = node.y ?? 0;
+      const labelScale = LABEL_SCALE[labelLevel - 1] ?? 1;
 
       ctx.globalAlpha = dim ? 0.18 : 1;
 
@@ -134,7 +161,7 @@ export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSi
         globalScale > 3.2;
 
       if (showLabel) {
-        const fontSize = Math.max(11 / globalScale, 2.6);
+        const fontSize = Math.max((11 * labelScale) / globalScale, 2.2);
         ctx.font = `${node.level >= 3 ? 700 : 600} ${fontSize}px Inter, system-ui, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
@@ -147,7 +174,7 @@ export default function OrgGraph({ activeCategories, selectedId, onSelect, fitSi
 
       ctx.globalAlpha = 1;
     },
-    [selectedId, highlightNodes, focusId],
+    [selectedId, highlightNodes, focusId, labelLevel],
   );
 
   const paintPointerArea = useCallback(

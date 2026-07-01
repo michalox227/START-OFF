@@ -42,9 +42,12 @@ Asystenci działów wewnętrznych łączą się bezpośrednio z Master Agentem C
 ## Strony
 
 - **Mapa** (`/`) — interaktywny graf: przeciąganie, zoom, klik węzła = szczegóły i powiązania,
-  legenda po lewej filtruje warstwy.
-- **Struktura** (`/struktura`) — ten sam model w formie czytelnego konspektu (dobre na mobile
-  i do prezentacji).
+  legenda po lewej filtruje warstwy. W prawym górnym rogu panel **Widok grafu** z dwoma
+  5-stopniowymi suwakami: odległość między obiektami i rozmiar napisów.
+- **Struktura** (`/struktura`) — ten sam model w formie czytelnego konspektu, z pełną edycją:
+  dodawanie, edytowanie i usuwanie elementów (przyciski ✎/✕ na każdej karcie oraz „+ Nowy element”).
+  Zmiany są od razu widoczne na Mapie — obie strony współdzielą ten sam edytowalny stan danych
+  (zapisywany w `localStorage` przeglądarki).
 
 ## Uruchomienie
 
@@ -62,29 +65,39 @@ Wymagany Node 18+ (testowane na Node 22).
 ```
 src/
   data/
-    organization.ts    # JEDYNE źródło prawdy: węzły (NODES) i połączenia (LINKS)
+    organization.ts    # domyślny (seed) zestaw danych: węzły (NODES) i połączenia (LINKS)
     categories.ts      # kategorie węzłów: kolory, etykiety, opisy (zasila legendę)
+  state/
+    OrgDataContext.tsx # edytowalny magazyn danych (Context + localStorage) — CRUD na węzłach
   components/
     OrgGraph.tsx        # graf w stylu Obsidian (react-force-graph-2d)
     Legend.tsx          # legenda + filtr warstw
-    NodeDetailPanel.tsx # panel szczegółów wybranego węzła
+    GraphControls.tsx   # suwaki: odległość między obiektami, rozmiar napisów
+    NodeDetailPanel.tsx # panel szczegółów wybranego węzła (+ edycja/usuwanie)
+    NodeEditDialog.tsx  # formularz dodawania/edycji elementu (współdzielony Mapa/Struktura)
     Header.tsx          # nagłówek + nawigacja
   pages/
     MapPage.tsx         # strona mapy
-    StructurePage.tsx   # strona ze strukturą (konspekt)
+    StructurePage.tsx   # strona ze strukturą (konspekt + CRUD elementów)
   hooks/
-    useMeasure.ts       # pomiar rozmiaru kontenera (ResizeObserver)
+    useMeasure.ts          # pomiar rozmiaru kontenera (ResizeObserver)
+    usePersistentState.ts  # useState zsynchronizowany z localStorage
 ```
 
 ## Jak rozbudować / reużyć
 
-Cała treść modelu żyje w `src/data/organization.ts`:
+Domyślny zestaw danych (seed) żyje w `src/data/organization.ts` — to on ładuje się przy
+pierwszym uruchomieniu i po kliknięciu „Przywróć domyślne” na stronie Struktura:
 
 - Dodaj węzeł do `NODES` (`id`, `label`, `category`, `level`, `summary`, opcjonalnie `details`).
 - Połącz go w `LINKS` (`struktura` = hierarchia, `ai` = połączenie agentów).
 - Nowe kategorie/kolory dodaj w `src/data/categories.ts`.
 
-Model można też zaimportować w innym repozytorium:
+Na żywo (w przeglądarce) strukturę edytuje się przez UI (Struktura lub panel szczegółów na
+Mapie) — zmiany trafiają do `OrgDataContext` i zapisują się w `localStorage`, więc przetrwają
+odświeżenie strony niezależnie od pliku `organization.ts`.
+
+Seed można też zaimportować w innym repozytorium:
 
 ```ts
 import { NODES, LINKS } from './src/data/organization';
