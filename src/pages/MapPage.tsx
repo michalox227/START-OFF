@@ -1,16 +1,21 @@
 import { useCallback, useState } from 'react';
+import GraphControls from '../components/GraphControls';
 import Legend from '../components/Legend';
 import NodeDetailPanel from '../components/NodeDetailPanel';
 import OrgGraph from '../components/OrgGraph';
 import { CATEGORIES, type CategoryId } from '../data/categories';
-import { NODE_MAP } from '../data/organization';
+import { usePersistentState } from '../hooks/usePersistentState';
+import { useOrgData } from '../state/OrgDataContext';
 
 const ALL_CATEGORIES = new Set<CategoryId>(CATEGORIES.map((c) => c.id));
 
 export default function MapPage() {
+  const { nodeMap } = useOrgData();
   const [active, setActive] = useState<Set<CategoryId>>(new Set(ALL_CATEGORIES));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [fitSignal, setFitSignal] = useState(0);
+  const [distanceLevel, setDistanceLevel] = usePersistentState('grantland-graph-distance', 3);
+  const [labelLevel, setLabelLevel] = usePersistentState('grantland-graph-label', 3);
 
   const toggle = useCallback((id: CategoryId) => {
     setActive((prev) => {
@@ -25,7 +30,7 @@ export default function MapPage() {
   const showAll = useCallback(() => setActive(new Set(ALL_CATEGORIES)), []);
   const fit = useCallback(() => setFitSignal((n) => n + 1), []);
 
-  const selectedNode = selectedId ? NODE_MAP[selectedId] ?? null : null;
+  const selectedNode = selectedId ? nodeMap[selectedId] ?? null : null;
 
   return (
     <div className="map">
@@ -34,13 +39,23 @@ export default function MapPage() {
         selectedId={selectedId}
         onSelect={setSelectedId}
         fitSignal={fitSignal}
+        distanceLevel={distanceLevel}
+        labelLevel={labelLevel}
       />
       <Legend active={active} onToggle={toggle} onAll={showAll} onFit={fit} />
-      <NodeDetailPanel
-        node={selectedNode}
-        onSelect={setSelectedId}
-        onClose={() => setSelectedId(null)}
-      />
+      <div className="map__right-rail">
+        <GraphControls
+          distanceLevel={distanceLevel}
+          labelLevel={labelLevel}
+          onDistanceChange={setDistanceLevel}
+          onLabelChange={setLabelLevel}
+        />
+        <NodeDetailPanel
+          node={selectedNode}
+          onSelect={setSelectedId}
+          onClose={() => setSelectedId(null)}
+        />
+      </div>
       <div className="map__hint">
         Przeciągaj, aby przesuwać · scroll = zoom · kliknij węzeł, aby zobaczyć szczegóły
       </div>
