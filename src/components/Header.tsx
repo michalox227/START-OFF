@@ -6,7 +6,7 @@ export default function Header() {
       <div className="brand">
         <div className="brand__mark" />
         <div>
-          <div className="brand__title">Grantland</div>
+          <div className="brand__title">GO ON [OFF] SHORE</div>
           <div className="brand__subtitle">Architektura organizacji · AI-first CRM</div>
         </div>
       </div>
