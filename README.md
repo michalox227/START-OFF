@@ -1,6 +1,6 @@
-# Grantland — Wizualizacja architektury organizacji
+# GO ON [OFF] SHORE — Wizualizacja architektury organizacji
 
-Interaktywna wizualizacja pomysłu biznesowego **Grantland** — dla Grantland, inwestorów,
+Interaktywna wizualizacja pomysłu biznesowego **GO ON [OFF] SHORE** — dla Grantland, inwestorów,
 pracowników i partnerów. Pierwsza strona to **mapa organizacji w stylu grafu Obsidian**:
 połączone ze sobą elementy pokazujące, jak działa cały system.
 
