@@ -8,6 +8,13 @@ Aplikacja jest sterowana jednym modelem danych (`src/data/organization.ts`), dzi
 łatwo ją **rozbudowywać i reużywać zasoby z innych repozytoriów** — wystarczy zaimportować
 lub rozszerzyć węzły i połączenia.
 
+## 🔗 Podgląd na żywo
+
+**➡️ https://michalox227.github.io/START-OFF/**
+
+Hosting darmowy (GitHub Pages), wdrażany automatycznie po każdej zmianie na gałęzi
+(workflow `.github/workflows/deploy.yml`).
+
 ## Co pokazuje mapa
 
 Model to **AI-first CRM** z czterema warstwami:
