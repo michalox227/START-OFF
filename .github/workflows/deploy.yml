@@ -56,6 +56,46 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
-        with:
-          # Kolejka wdrożeń Pages bywa zapchana — czekamy do 20 minut.
-          timeout: 1200000
+        # deploy-pages czeka maksymalnie 10 minut i po timeoucie ANULUJE
+        # wdrożenie. Gdy kolejka Pages jest zapchana, żadne wdrożenie nie
+        # dochodzi do skutku — dlatego poniżej plan B.
+        continue-on-error: true
+
+      - name: Ponów wdrożenie bez anulowania (zapchana kolejka Pages)
+        if: steps.deployment.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Tworzymy wdrożenie Pages przez API tak jak deploy-pages, ale nie
+          # anulujemy go po czasie — zostaje w kolejce i aktywuje się samo,
+          # gdy backend Pages ją przetworzy.
+          set -euo pipefail
+          OIDC_TOKEN=$(curl -sf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          ART_ID=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" \
+            | jq -r '.artifacts[0].id')
+          echo "Artifact: $ART_ID, wersja: $GITHUB_SHA"
+          RESP=$(curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/pages/deployments" \
+            -d "{\"artifact_id\": $ART_ID, \"pages_build_version\": \"$GITHUB_SHA\", \"oidc_token\": \"$OIDC_TOKEN\"}")
+          echo "$RESP" | jq -r '.status_url // .message'
+          STATUS_URL=$(echo "$RESP" | jq -r '.status_url // empty')
+          if [ -z "$STATUS_URL" ]; then
+            echo "Nie udało się utworzyć wdrożenia:"; echo "$RESP"; exit 1
+          fi
+          # Czekamy do ~8 minut; jeśli nadal w kolejce, kończymy sukcesem
+          # i zostawiamy wdrożenie, by aktywowało się później.
+          for i in $(seq 1 32); do
+            S=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "$STATUS_URL" | jq -r .status)
+            echo "Status wdrożenia: $S"
+            case "$S" in
+              succeed) echo "Wdrożenie aktywne."; exit 0;;
+              deployment_failed|deployment_content_failed|deployment_cancelled)
+                echo "Wdrożenie nieudane: $S"; exit 1;;
+            esac
+            sleep 15
+          done
+          echo "Wdrożenie wciąż w kolejce — zostawiamy je aktywne (bez anulowania)."
