@@ -75,12 +75,15 @@ jobs:
           ART_ID=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" \
             | jq -r '.artifacts[0].id')
-          echo "Artifact: $ART_ID, wersja: $GITHUB_SHA"
+          # Wersja musi być inna niż SHA — deploy-pages właśnie anulowało
+          # wdrożenie o wersji $GITHUB_SHA, a API deduplikuje po wersji.
+          VERSION="${GITHUB_SHA}-retry-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "Artifact: $ART_ID, wersja: $VERSION"
           RESP=$(curl -s -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/pages/deployments" \
-            -d "{\"artifact_id\": $ART_ID, \"pages_build_version\": \"$GITHUB_SHA\", \"oidc_token\": \"$OIDC_TOKEN\"}")
+            -d "{\"artifact_id\": $ART_ID, \"pages_build_version\": \"$VERSION\", \"oidc_token\": \"$OIDC_TOKEN\"}")
           echo "$RESP" | jq -r '.status_url // .message'
           STATUS_URL=$(echo "$RESP" | jq -r '.status_url // empty')
           if [ -z "$STATUS_URL" ]; then
