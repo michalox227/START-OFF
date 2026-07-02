@@ -14,6 +14,8 @@ export interface FnSpec {
   label: string;
   summary: string;
   details: string[];
+  /** Surowy fragment markdown sekcji (z nagłówkiem, bez podsekcji). */
+  markdown: string;
   children: FnSpec[];
 }
 
@@ -38,6 +40,8 @@ interface RawSection {
   num: number[];
   title: string;
   bodyLines: string[];
+  /** Oryginalne linie sekcji (z nagłówkiem) — do wyświetlania fragmentu 1:1. */
+  rawLines: string[];
 }
 
 /** Rozbija notatkę markdown na numerowane sekcje (1., 2., … oraz N.M.). */
@@ -55,6 +59,7 @@ function splitSections(note: string): RawSection[] {
           num: numbered[1].split('.').map(Number),
           title: cleanInline(numbered[2]),
           bodyLines: [],
+          rawLines: [line],
         };
         sections.push(current);
       } else if (current) {
@@ -62,10 +67,14 @@ function splitSections(note: string): RawSection[] {
         // traktujemy jako punkt treści bieżącej sekcji.
         const title = cleanInline(heading[2]);
         if (title) current.bodyLines.push(`- ${title}`);
+        current.rawLines.push(line);
       }
       continue;
     }
-    if (current) current.bodyLines.push(line);
+    if (current) {
+      current.bodyLines.push(line);
+      current.rawLines.push(line);
+    }
   }
   return sections;
 }
@@ -120,17 +129,18 @@ export function parseFunctions(note: string): FnSpec[] {
   let currentTop: FnSpec | null = null;
 
   sections.forEach((section, i) => {
+    const markdown = section.rawLines.join('\n').trim();
     if (section.num.length === 1) {
       // Nagłówek-tytuł dokumentu: pusta treść i brak własnych podsekcji.
       const next = sections[i + 1];
       const hasSubs = next && next.num.length === 2;
       if (!hasContent(section.bodyLines) && !hasSubs) return;
       const { summary, details } = extractContent(section.bodyLines);
-      currentTop = { label: section.title, summary, details, children: [] };
+      currentTop = { label: section.title, summary, details, markdown, children: [] };
       tops.push(currentTop);
     } else if (currentTop) {
       const { summary, details } = extractContent(section.bodyLines);
-      currentTop.children.push({ label: section.title, summary, details, children: [] });
+      currentTop.children.push({ label: section.title, summary, details, markdown, children: [] });
     }
   });
 
@@ -184,6 +194,23 @@ export function buildFunctionGraph(
 /** Prefiks id elementów funkcyjnych danego konta (do podmiany przy skanie). */
 export function functionIdPrefix(accountId: string): string {
   return `fn-${accountId}-`;
+}
+
+/**
+ * Zwraca surowy fragment markdown notatki odpowiadający elementowi
+ * funkcyjnemu (id `fn-<konto>-<i>` lub `fn-<konto>-<i>-<j>`). Fragment
+ * funkcji głównej zawiera także jej podsekcje.
+ */
+export function findFunctionFragment(note: string, accountId: string, fnId: string): string | null {
+  const suffix = fnId.slice(functionIdPrefix(accountId).length);
+  const [i, j] = suffix.split('-').map(Number);
+  if (!Number.isInteger(i) || i < 1) return null;
+  const top = parseFunctions(note)[i - 1];
+  if (!top) return null;
+  if (j === undefined) {
+    return [top.markdown, ...top.children.map((c) => c.markdown)].join('\n\n');
+  }
+  return top.children[j - 1]?.markdown ?? null;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,18 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CATEGORY_MAP } from '../data/categories';
+import { findFunctionFragment, functionIdPrefix } from '../data/functions';
 import type { OrgNode } from '../data/organization';
 import { useKnowledgeBase } from '../state/KnowledgeBaseContext';
 import { useOrgData, type NodeInput } from '../state/OrgDataContext';
+import MarkdownLite from './MarkdownLite';
 import NodeEditDialog from './NodeEditDialog';
 
 interface Props {
   node: OrgNode | null;
   onSelect: (id: string) => void;
   onClose: () => void;
+  /** Otwiera sekcję pełnego opisu z bazy wiedzy od razu (widok hierarchii). */
+  fullNote?: boolean;
 }
 
-export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
+export default function NodeDetailPanel({ node, onSelect, onClose, fullNote = false }: Props) {
   const { nodes, connectionsOf, parentIdOf, structuralChildren, updateNode, deleteNode } =
     useOrgData();
   const { findEntryByNode } = useKnowledgeBase();
@@ -42,6 +46,17 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
   for (let id = parentIdOf(node.id), depth = 0; !kbRef && id && depth < 24; depth++) {
     kbRef = findEntryByNode(id);
     id = parentIdOf(id);
+  }
+
+  // Pełny opis z bazy: cała notatka dla elementu z wpisem, a dla elementu
+  // funkcyjnego — dokładnie ten fragment notatki, z którego powstał.
+  let noteMarkdown: string | null = null;
+  if (kbRef?.entry.note) {
+    if (node.category === 'funkcja' && kbRef.entry.nodeId && node.id.startsWith(functionIdPrefix(kbRef.entry.nodeId))) {
+      noteMarkdown = findFunctionFragment(kbRef.entry.note, kbRef.entry.nodeId, node.id);
+    } else if (kbRef.entry.nodeId === node.id) {
+      noteMarkdown = kbRef.entry.note;
+    }
   }
 
   function handleSave(input: NodeInput) {
@@ -117,6 +132,16 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
               </Link>
             </div>
           </>
+        )}
+
+        {noteMarkdown && (
+          <details className="detail__fullnote" key={`${node.id}-${fullNote}`} open={fullNote}>
+            <summary>
+              Pełny opis z bazy wiedzy
+              {node.category === 'funkcja' ? ' (fragment notatki)' : ' (cała notatka)'}
+            </summary>
+            <MarkdownLite text={noteMarkdown} />
+          </details>
         )}
 
         {otherConnections.length > 0 && (
