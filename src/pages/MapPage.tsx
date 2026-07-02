@@ -10,12 +10,42 @@ import { useOrgData } from '../state/OrgDataContext';
 const ALL_CATEGORIES = new Set<CategoryId>(CATEGORIES.map((c) => c.id));
 
 export default function MapPage() {
-  const { nodeMap } = useOrgData();
+  const { nodeMap, parentIdOf } = useOrgData();
   const [active, setActive] = useState<Set<CategoryId>>(new Set(ALL_CATEGORIES));
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [fitSignal, setFitSignal] = useState(0);
   const [distanceLevel, setDistanceLevel] = usePersistentState('grantland-graph-distance', 3);
   const [labelLevel, setLabelLevel] = usePersistentState('grantland-graph-label', 3);
+
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  // Wybór węzła (np. z panelu szczegółów) rozwija jego przodków, aby element
+  // funkcyjny był widoczny na mapie.
+  const handleSelect = useCallback(
+    (id: string | null) => {
+      setSelectedId(id);
+      if (!id) return;
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        let parent = parentIdOf(id);
+        let depth = 0;
+        while (parent && depth++ < 24) {
+          next.add(parent);
+          parent = parentIdOf(parent);
+        }
+        return next.size === prev.size ? prev : next;
+      });
+    },
+    [parentIdOf],
+  );
 
   const toggle = useCallback((id: CategoryId) => {
     setActive((prev) => {
@@ -37,7 +67,9 @@ export default function MapPage() {
       <OrgGraph
         activeCategories={active}
         selectedId={selectedId}
-        onSelect={setSelectedId}
+        onSelect={handleSelect}
+        expandedIds={expandedIds}
+        onToggleExpand={toggleExpand}
         fitSignal={fitSignal}
         distanceLevel={distanceLevel}
         labelLevel={labelLevel}
@@ -52,12 +84,13 @@ export default function MapPage() {
         />
         <NodeDetailPanel
           node={selectedNode}
-          onSelect={setSelectedId}
+          onSelect={handleSelect}
           onClose={() => setSelectedId(null)}
         />
       </div>
       <div className="map__hint">
-        Przeciągaj, aby przesuwać · scroll = zoom · kliknij węzeł, aby zobaczyć szczegóły
+        Przeciągaj, aby przesuwać · scroll = zoom · kliknij konto (+N), aby rozwinąć jego funkcje ·
+        kliknij węzeł, aby zobaczyć szczegóły
       </div>
     </div>
   );

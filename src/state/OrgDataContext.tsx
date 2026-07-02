@@ -1,6 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CategoryId } from '../data/categories';
-import { LINKS as DEFAULT_LINKS, NODES as DEFAULT_NODES, type OrgLink, type OrgNode } from '../data/organization';
+import {
+  buildFunctionGraph,
+  DEFAULT_FUNCTION_LINKS,
+  DEFAULT_FUNCTION_NODES,
+  functionIdPrefix,
+  type FnSpec,
+} from '../data/functions';
+import { LINKS as BASE_LINKS, NODES as BASE_NODES, type OrgLink, type OrgNode } from '../data/organization';
 
 // ---------------------------------------------------------------------------
 // Edytowalny magazyn danych organizacji.
@@ -12,9 +19,29 @@ import { LINKS as DEFAULT_LINKS, NODES as DEFAULT_NODES, type OrgLink, type OrgN
 
 const STORAGE_KEY = 'grantland-org-data-v1';
 
+// Domyślne dane = struktura organizacji + elementy funkcyjne z bazy wiedzy.
+const DEFAULT_NODES: OrgNode[] = [...BASE_NODES, ...DEFAULT_FUNCTION_NODES];
+const DEFAULT_LINKS: OrgLink[] = [...BASE_LINKS, ...DEFAULT_FUNCTION_LINKS];
+
 interface StoredData {
   nodes: OrgNode[];
   links: OrgLink[];
+}
+
+/**
+ * Dosiewa domyślne elementy funkcyjne do danych zapisanych przed ich
+ * wprowadzeniem — tylko dla kont, które nadal istnieją w danych użytkownika.
+ */
+function seedFunctions(data: StoredData): StoredData {
+  if (data.nodes.some((n) => n.category === 'funkcja')) return data;
+  const existingIds = new Set(data.nodes.map((n) => n.id));
+  const nodes = DEFAULT_FUNCTION_NODES.filter((n) => {
+    const rootAccount = n.id.replace(/^fn-/, '').replace(/(-\d+){1,2}$/, '');
+    return existingIds.has(rootAccount);
+  });
+  const nodeIds = new Set([...existingIds, ...nodes.map((n) => n.id)]);
+  const links = DEFAULT_FUNCTION_LINKS.filter((l) => nodeIds.has(l.source) && nodeIds.has(l.target));
+  return { nodes: [...data.nodes, ...nodes], links: [...data.links, ...links] };
 }
 
 function loadInitial(): StoredData {
@@ -23,7 +50,7 @@ function loadInitial(): StoredData {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<StoredData>;
       if (Array.isArray(parsed.nodes) && Array.isArray(parsed.links)) {
-        return { nodes: parsed.nodes, links: parsed.links };
+        return seedFunctions({ nodes: parsed.nodes, links: parsed.links });
       }
     }
   } catch {
@@ -62,6 +89,8 @@ interface OrgDataValue {
   addNode: (input: NodeInput) => string;
   updateNode: (id: string, input: NodeInput) => void;
   deleteNode: (id: string) => void;
+  /** Podmienia elementy funkcyjne konta na drzewo sparsowane z notatki. Zwraca liczbę elementów. */
+  syncFunctions: (accountId: string, fns: FnSpec[]) => number;
   resetToDefault: () => void;
 }
 
@@ -159,6 +188,19 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
     setLinks((prev) => prev.filter((l) => l.source !== id && l.target !== id));
   }
 
+  function syncFunctions(accountId: string, fns: FnSpec[]): number {
+    const prefix = functionIdPrefix(accountId);
+    const graph = buildFunctionGraph(accountId, fns);
+    setNodes((prev) => [...prev.filter((n) => !n.id.startsWith(prefix)), ...graph.nodes]);
+    setLinks((prev) => [
+      ...prev.filter(
+        (l) => !String(l.source).startsWith(prefix) && !String(l.target).startsWith(prefix),
+      ),
+      ...graph.links,
+    ]);
+    return graph.nodes.length;
+  }
+
   function resetToDefault() {
     setNodes(DEFAULT_NODES);
     setLinks(DEFAULT_LINKS);
@@ -174,6 +216,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
     addNode,
     updateNode,
     deleteNode,
+    syncFunctions,
     resetToDefault,
   };
 

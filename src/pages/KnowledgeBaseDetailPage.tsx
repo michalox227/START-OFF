@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import MarkdownLite from '../components/MarkdownLite';
+import { parseFunctions } from '../data/functions';
 import type { KbCategory, KbEntry } from '../data/knowledgeBase';
 import type { OrgNode } from '../data/organization';
 import {
@@ -211,13 +212,17 @@ export default function KnowledgeBaseDetailPage() {
 
   // Narzędzie skanujące: zczytuje dane z bazy wiedzy i uzupełnia je na platformie.
   // Wpis powiązany z elementem mapy aktualizuje jego opis i szczegóły; wpis bez
-  // powiązania tworzy nowy element (pod elementem nadrzędnym kategorii).
+  // powiązania tworzy nowy element (pod elementem nadrzędnym kategorii). Pełna
+  // notatka wpisu jest parsowana na elementy funkcyjne — podelementy konta
+  // widoczne na Mapie (rozwijane kliknięciem) i w Strukturze.
   function handleScan() {
     let updated = 0;
     let created = 0;
+    let fnCount = 0;
     for (const category of base!.categories) {
       for (const entry of category.entries) {
         const existing = entry.nodeId ? org.nodeMap[entry.nodeId] : undefined;
+        let accountId: string;
         if (existing) {
           org.updateNode(existing.id, {
             label: existing.label,
@@ -227,11 +232,12 @@ export default function KnowledgeBaseDetailPage() {
             details: entry.summary,
             parentId: org.parentIdOf(existing.id),
           });
+          accountId = existing.id;
           updated++;
         } else {
           const parentId =
             category.parentNodeId && org.nodeMap[category.parentNodeId] ? category.parentNodeId : null;
-          const newId = org.addNode({
+          accountId = org.addNode({
             label: entry.title,
             category: 'podkonto',
             level: 1,
@@ -239,13 +245,16 @@ export default function KnowledgeBaseDetailPage() {
             details: entry.summary,
             parentId,
           });
-          kb.updateEntry(base!.id, category.id, entry.id, { nodeId: newId });
+          kb.updateEntry(base!.id, category.id, entry.id, { nodeId: accountId });
           created++;
+        }
+        if (entry.note.trim()) {
+          fnCount += org.syncFunctions(accountId, parseFunctions(entry.note));
         }
       }
     }
     setScanResult(
-      `Skanowanie zakończone: zaktualizowano ${updated} elementów platformy, utworzono ${created} nowych. Zmiany są widoczne na Mapie i w Strukturze.`,
+      `Skanowanie zakończone: zaktualizowano ${updated} elementów platformy, utworzono ${created} nowych i zsynchronizowano ${fnCount} elementów funkcyjnych z pełnych notatek. Zmiany są widoczne na Mapie i w Strukturze.`,
     );
   }
 
