@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CATEGORY_MAP } from '../data/categories';
 import type { OrgNode } from '../data/organization';
+import { useKnowledgeBase } from '../state/KnowledgeBaseContext';
 import { useOrgData, type NodeInput } from '../state/OrgDataContext';
 import NodeEditDialog from './NodeEditDialog';
 
@@ -12,6 +14,7 @@ interface Props {
 
 export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
   const { nodes, connectionsOf, parentIdOf, updateNode, deleteNode } = useOrgData();
+  const { findEntryByNode } = useKnowledgeBase();
   const [editing, setEditing] = useState(false);
 
   if (!node) {
@@ -28,6 +31,7 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
 
   const meta = CATEGORY_MAP[node.category];
   const connections = connectionsOf(node.id);
+  const kbRef = findEntryByNode(node.id);
 
   function handleSave(input: NodeInput) {
     updateNode(node!.id, input);
@@ -76,6 +80,17 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
                 <li key={i}>{d}</li>
               ))}
             </ul>
+          </>
+        )}
+
+        {kbRef && (
+          <>
+            <p className="detail__section-title">Baza wiedzy</p>
+            <div className="chip-list" style={{ marginBottom: 22 }}>
+              <Link className="chip" to={`/baza-wiedzy/${kbRef.base.id}/${kbRef.entry.id}`}>
+                📚 {kbRef.entry.title}
+              </Link>
+            </div>
           </>
         )}
 

@@ -24,6 +24,12 @@ export default function Header() {
         >
           Struktura
         </NavLink>
+        <NavLink
+          to="/baza-wiedzy"
+          className={({ isActive }) => `nav__link${isActive ? ' nav__link--active' : ''}`}
+        >
+          Baza wiedzy
+        </NavLink>
       </nav>
     </header>
   );
