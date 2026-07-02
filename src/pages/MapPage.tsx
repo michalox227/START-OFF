@@ -3,9 +3,12 @@ import GraphControls from '../components/GraphControls';
 import Legend from '../components/Legend';
 import NodeDetailPanel from '../components/NodeDetailPanel';
 import OrgGraph from '../components/OrgGraph';
+import OrgHierarchy from '../components/OrgHierarchy';
 import { CATEGORIES, type CategoryId } from '../data/categories';
 import { usePersistentState } from '../hooks/usePersistentState';
 import { useOrgData } from '../state/OrgDataContext';
+
+type MapView = 'graf' | 'hierarchia';
 
 const ALL_CATEGORIES = new Set<CategoryId>(CATEGORIES.map((c) => c.id));
 
@@ -17,6 +20,7 @@ export default function MapPage() {
   const [fitSignal, setFitSignal] = useState(0);
   const [distanceLevel, setDistanceLevel] = usePersistentState('grantland-graph-distance', 3);
   const [labelLevel, setLabelLevel] = usePersistentState('grantland-graph-label', 3);
+  const [view, setView] = usePersistentState<MapView>('grantland-map-view', 'graf');
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => {
@@ -64,33 +68,55 @@ export default function MapPage() {
 
   return (
     <div className="map">
-      <OrgGraph
-        activeCategories={active}
-        selectedId={selectedId}
-        onSelect={handleSelect}
-        expandedIds={expandedIds}
-        onToggleExpand={toggleExpand}
-        fitSignal={fitSignal}
-        distanceLevel={distanceLevel}
-        labelLevel={labelLevel}
-      />
-      <Legend active={active} onToggle={toggle} onAll={showAll} onFit={fit} />
-      <div className="map__right-rail">
-        <GraphControls
+      {view === 'graf' ? (
+        <OrgGraph
+          activeCategories={active}
+          selectedId={selectedId}
+          onSelect={handleSelect}
+          expandedIds={expandedIds}
+          onToggleExpand={toggleExpand}
+          fitSignal={fitSignal}
           distanceLevel={distanceLevel}
           labelLevel={labelLevel}
-          onDistanceChange={setDistanceLevel}
-          onLabelChange={setLabelLevel}
         />
+      ) : (
+        <OrgHierarchy selectedId={selectedId} onSelect={handleSelect} />
+      )}
+      {view === 'graf' && <Legend active={active} onToggle={toggle} onAll={showAll} onFit={fit} />}
+      <div className="view-switch">
+        <button
+          className={`view-switch__btn${view === 'graf' ? ' view-switch__btn--on' : ''}`}
+          onClick={() => setView('graf')}
+        >
+          Graf
+        </button>
+        <button
+          className={`view-switch__btn${view === 'hierarchia' ? ' view-switch__btn--on' : ''}`}
+          onClick={() => setView('hierarchia')}
+        >
+          Hierarchia
+        </button>
+      </div>
+      <div className="map__right-rail">
+        {view === 'graf' && (
+          <GraphControls
+            distanceLevel={distanceLevel}
+            labelLevel={labelLevel}
+            onDistanceChange={setDistanceLevel}
+            onLabelChange={setLabelLevel}
+          />
+        )}
         <NodeDetailPanel
           node={selectedNode}
           onSelect={handleSelect}
           onClose={() => setSelectedId(null)}
+          fullNote={view === 'hierarchia'}
         />
       </div>
       <div className="map__hint">
-        Przeciągaj, aby przesuwać · scroll = zoom · kliknij konto (+N), aby rozwinąć jego funkcje ·
-        kliknij węzeł, aby zobaczyć szczegóły
+        {view === 'graf'
+          ? 'Przeciągaj, aby przesuwać · scroll = zoom · kliknij konto (+N), aby rozwinąć jego funkcje · kliknij węzeł, aby zobaczyć szczegóły'
+          : 'Kliknij element, aby zobaczyć pełny opis z bazy wiedzy po prawej · ▸ rozwija przypisane elementy'}
       </div>
     </div>
   );
