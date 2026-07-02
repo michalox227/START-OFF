@@ -116,10 +116,21 @@ export default function KnowledgeBasePage() {
                 <div className="card__children">
                   <span className="tag">{base.categories.length} kategorie</span>
                   <span className="tag">{entryCount} wpisów</span>
+                  {base.toolUrl && <span className="tag tag--tool">+ narzędzie</span>}
                 </div>
                 <Link className="btn btn--inline kb-base-card__open" to={`/baza-wiedzy/${base.id}`}>
                   Otwórz bazę →
                 </Link>
+                {base.toolUrl && (
+                  <a
+                    className="btn btn--inline kb-base-card__tool"
+                    href={`${import.meta.env.BASE_URL}${base.toolUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {base.toolLabel ?? 'Otwórz narzędzie →'}
+                  </a>
+                )}
               </div>
             );
           })}

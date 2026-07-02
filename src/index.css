@@ -1466,3 +1466,103 @@ a {
     bottom: 40vh;
   }
 }
+
+/* --- Ekran logowania ------------------------------------------------------ */
+
+.login {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top left, rgba(167, 139, 250, 0.14), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(94, 234, 212, 0.1), transparent 42%),
+    var(--bg, #0b0c12);
+}
+
+.login__card {
+  width: min(420px, 100%);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 30px 28px;
+}
+
+.login__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.login__title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.login__lead {
+  margin: 0 0 18px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.login__error {
+  margin: 4px 0 0;
+  color: #f87171;
+  font-size: 13px;
+}
+
+.login__submit {
+  width: 100%;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.nav__logout {
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-dim);
+  font: inherit;
+}
+
+.nav__logout:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+/* --- Przyciski narzędzi w bazie wiedzy ------------------------------------ */
+
+.btn--tool {
+  border-color: rgba(242, 169, 59, 0.45);
+  background: rgba(242, 169, 59, 0.14);
+  color: #f5c877;
+}
+
+.btn--tool:hover {
+  border-color: #f2a93b;
+  color: #ffdca0;
+}
+
+.kb__tool-btn {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.kb-base-card__tool {
+  display: block;
+  margin-top: 8px;
+  border-color: rgba(242, 169, 59, 0.45);
+  background: rgba(242, 169, 59, 0.12);
+  color: #f5c877;
+}
+
+.tag--tool {
+  border-color: rgba(242, 169, 59, 0.4);
+  color: #f5c877;
+  background: rgba(242, 169, 59, 0.1);
+}
