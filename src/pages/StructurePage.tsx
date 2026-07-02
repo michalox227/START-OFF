@@ -16,6 +16,8 @@ function Card({ node, onEdit, onDelete }: CardProps) {
   const { structuralChildren } = useOrgData();
   const meta = CATEGORY_MAP[node.category];
   const children = structuralChildren(node.id);
+  const fnChildren = children.filter((c) => c.category === 'funkcja');
+  const otherChildren = children.filter((c) => c.category !== 'funkcja');
 
   return (
     <div className="card" style={{ borderLeftColor: meta.color }}>
@@ -31,14 +33,39 @@ function Card({ node, onEdit, onDelete }: CardProps) {
         </div>
       </div>
       <p className="card__summary">{node.summary}</p>
-      {children.length > 0 && (
+      {otherChildren.length > 0 && (
         <div className="card__children">
-          {children.map((c) => (
+          {otherChildren.map((c) => (
             <span key={c.id} className="tag">
               {c.label}
             </span>
           ))}
         </div>
+      )}
+      {fnChildren.length > 0 && (
+        <details className="card__functions">
+          <summary>
+            Pełne funkcje z bazy wiedzy <span className="card__fn-count">{fnChildren.length}</span>
+          </summary>
+          <ol className="fn-list">
+            {fnChildren.map((fn) => {
+              const subs = structuralChildren(fn.id).filter((c) => c.category === 'funkcja');
+              return (
+                <li key={fn.id}>
+                  <span className="fn-list__label">{fn.label}</span>
+                  {fn.summary && <span className="fn-list__summary">{fn.summary}</span>}
+                  {subs.length > 0 && (
+                    <ul className="fn-list__subs">
+                      {subs.map((s) => (
+                        <li key={s.id}>{s.label}</li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </details>
       )}
     </div>
   );
@@ -136,7 +163,8 @@ export default function StructurePage() {
           </Link>
         </section>
 
-        {CATEGORIES.map((cat) => {
+        {/* Elementy funkcyjne nie mają własnej sekcji — są podelementami kont. */}
+        {CATEGORIES.filter((cat) => cat.id !== 'funkcja').map((cat) => {
           const list = nodesByCategory.get(cat.id) ?? [];
           return (
             <section key={cat.id} className="section">

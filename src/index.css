@@ -1157,3 +1157,106 @@ a {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* --- Elementy funkcyjne kont (z bazy wiedzy) ------------------------------ */
+
+.card__functions {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.card__functions > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f472b6;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.card__functions > summary::before {
+  content: '▸';
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.card__functions[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.card__fn-count {
+  background: rgba(244, 114, 182, 0.14);
+  border: 1px solid rgba(244, 114, 182, 0.35);
+  border-radius: 999px;
+  padding: 0 8px;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.fn-list {
+  margin: 10px 0 2px;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fn-list > li::marker {
+  color: #f472b6;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.fn-list__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fn-list__summary {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.fn-list__subs {
+  margin: 4px 0 0;
+  padding-left: 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fn-list__subs li::marker {
+  color: rgba(244, 114, 182, 0.7);
+}
+
+.chip-list--fn {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.chip--fn {
+  border-color: rgba(244, 114, 182, 0.35);
+}
+
+.chip--fn:hover {
+  border-color: #f472b6;
+}
+
+.chip__num {
+  color: #f472b6;
+  font-weight: 700;
+  font-size: 11px;
+  min-width: 14px;
+  text-align: right;
+}

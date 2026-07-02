@@ -8,7 +8,8 @@ export type CategoryId =
   | 'asystent' // Indywidualny asystent AI
   | 'konto' // Typ konta (użytkownik zewnętrzny)
   | 'podkonto' // Podtyp konta
-  | 'dzial'; // Dział wewnętrzny
+  | 'dzial' // Dział wewnętrzny
+  | 'funkcja'; // Element funkcyjny konta (z bazy wiedzy)
 
 export interface CategoryMeta {
   id: CategoryId;
@@ -53,6 +54,12 @@ export const CATEGORIES: CategoryMeta[] = [
     label: 'Dział wewnętrzny',
     color: '#34d399',
     description: 'Obszary naszego zespołu prowadzącego projekt.',
+  },
+  {
+    id: 'funkcja',
+    label: 'Funkcja konta',
+    color: '#f472b6',
+    description: 'Elementy funkcyjne kont z bazy wiedzy — kliknij konto na mapie, aby je rozwinąć.',
   },
 ];
 

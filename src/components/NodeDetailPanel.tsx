@@ -13,7 +13,8 @@ interface Props {
 }
 
 export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
-  const { nodes, connectionsOf, parentIdOf, updateNode, deleteNode } = useOrgData();
+  const { nodes, connectionsOf, parentIdOf, structuralChildren, updateNode, deleteNode } =
+    useOrgData();
   const { findEntryByNode } = useKnowledgeBase();
   const [editing, setEditing] = useState(false);
 
@@ -31,7 +32,17 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
 
   const meta = CATEGORY_MAP[node.category];
   const connections = connectionsOf(node.id);
-  const kbRef = findEntryByNode(node.id);
+  const fnChildren = structuralChildren(node.id).filter((c) => c.category === 'funkcja');
+  const fnChildIds = new Set(fnChildren.map((c) => c.id));
+  const otherConnections = connections.filter((c) => !fnChildIds.has(c.id));
+
+  // Wpis bazy wiedzy: bezpośredni albo odziedziczony po koncie nadrzędnym
+  // (elementy funkcyjne prowadzą do pełnej notatki swojego konta).
+  let kbRef = findEntryByNode(node.id);
+  for (let id = parentIdOf(node.id), depth = 0; !kbRef && id && depth < 24; depth++) {
+    kbRef = findEntryByNode(id);
+    id = parentIdOf(id);
+  }
 
   function handleSave(input: NodeInput) {
     updateNode(node!.id, input);
@@ -83,6 +94,20 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
           </>
         )}
 
+        {fnChildren.length > 0 && (
+          <>
+            <p className="detail__section-title">Elementy funkcyjne ({fnChildren.length})</p>
+            <div className="chip-list chip-list--fn" style={{ marginBottom: 22 }}>
+              {fnChildren.map((c, i) => (
+                <button key={c.id} className="chip chip--fn" onClick={() => onSelect(c.id)}>
+                  <span className="chip__num">{i + 1}</span>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
         {kbRef && (
           <>
             <p className="detail__section-title">Baza wiedzy</p>
@@ -94,11 +119,11 @@ export default function NodeDetailPanel({ node, onSelect, onClose }: Props) {
           </>
         )}
 
-        {connections.length > 0 && (
+        {otherConnections.length > 0 && (
           <>
-            <p className="detail__section-title">Powiązania ({connections.length})</p>
+            <p className="detail__section-title">Powiązania ({otherConnections.length})</p>
             <div className="chip-list">
-              {connections.map((c) => {
+              {otherConnections.map((c) => {
                 const cm = CATEGORY_MAP[c.category];
                 return (
                   <button key={c.id} className="chip" onClick={() => onSelect(c.id)}>

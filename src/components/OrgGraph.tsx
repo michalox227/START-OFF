@@ -11,6 +11,9 @@ interface Props {
   activeCategories: Set<CategoryId>;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
+  /** Węzły z rozwiniętymi elementami funkcyjnymi. */
+  expandedIds: Set<string>;
+  onToggleExpand: (id: string) => void;
   /** Sygnał z zewnątrz (np. przycisk „Dopasuj widok”). */
   fitSignal: number;
   /** Skala 1–5: jak daleko od siebie mają być rozmieszczone obiekty. */
@@ -31,26 +34,58 @@ export default function OrgGraph({
   activeCategories,
   selectedId,
   onSelect,
+  expandedIds,
+  onToggleExpand,
   fitSignal,
   distanceLevel,
   labelLevel,
 }: Props) {
-  const { nodes: allNodes, links: allLinks } = useOrgData();
+  const { nodes: allNodes, links: allLinks, nodeMap } = useOrgData();
   const { ref, width, height } = useMeasure<HTMLDivElement>();
   const fgRef = useRef<any>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const needFit = useRef(true);
 
-  // Dane grafu przefiltrowane po aktywnych kategoriach.
+  // Elementy funkcyjne: rodzic każdej funkcji + liczba funkcji pod węzłem.
+  const fnParent = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const l of allLinks) {
+      if (l.kind !== 'struktura') continue;
+      if (nodeMap[l.target]?.category === 'funkcja') map.set(l.target, l.source);
+    }
+    return map;
+  }, [allLinks, nodeMap]);
+
+  const fnChildCount = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const [, parent] of fnParent) map.set(parent, (map.get(parent) ?? 0) + 1);
+    return map;
+  }, [fnParent]);
+
+  // Dane grafu: filtr kategorii + progresywne rozwijanie elementów funkcyjnych
+  // (funkcja jest widoczna tylko, gdy jej rodzic jest widoczny i rozwinięty).
   const graphData = useMemo(() => {
-    const visible = allNodes.filter((n) => activeCategories.has(n.category));
+    const memo = new Map<string, boolean>();
+    const isVisible = (id: string, depth = 0): boolean => {
+      const cached = memo.get(id);
+      if (cached !== undefined) return cached;
+      const node = nodeMap[id];
+      let result = Boolean(node) && activeCategories.has(node!.category);
+      if (result && node!.category === 'funkcja' && depth < 24) {
+        const parent = fnParent.get(id);
+        result = !parent || (expandedIds.has(parent) && isVisible(parent, depth + 1));
+      }
+      memo.set(id, result);
+      return result;
+    };
+    const visible = allNodes.filter((n) => isVisible(n.id));
     const ids = new Set(visible.map((n) => n.id));
     const links = allLinks.filter((l) => ids.has(l.source) && ids.has(l.target)).map((l) => ({
       ...l,
     }));
     // Kopie węzłów, aby symulacja nie mutowała współdzielonych obiektów.
     return { nodes: visible.map((n) => ({ ...n })) as GraphNode[], links };
-  }, [allNodes, allLinks, activeCategories]);
+  }, [allNodes, allLinks, activeCategories, expandedIds, fnParent, nodeMap]);
 
   // Mapa sąsiedztwa do podświetlania powiązań.
   const adjacency = useMemo(() => {
@@ -88,7 +123,11 @@ export default function OrgGraph({
     if (!fg) return;
     const scale = DISTANCE_SCALE[distanceLevel - 1] ?? 1;
     fg.d3Force('charge')?.strength(-160 * scale).distanceMax(320 * scale);
-    fg.d3Force('link')?.distance((l: OrgLink) => (l.kind === 'ai' ? 70 : 52) * scale);
+    fg.d3Force('link')?.distance((l: OrgLink) => {
+      const target = typeof l.target === 'object' ? (l.target as any).id : l.target;
+      if (String(target).startsWith('fn-')) return 30 * scale;
+      return (l.kind === 'ai' ? 70 : 52) * scale;
+    });
     if (isFirstDistanceRun.current) {
       isFirstDistanceRun.current = false;
       return;
@@ -172,9 +211,25 @@ export default function OrgGraph({
         ctx.shadowBlur = 0;
       }
 
+      // Plakietka rozwijania elementów funkcyjnych (+N / −).
+      const fnCount = fnChildCount.get(node.id) ?? 0;
+      if (fnCount > 0 && !dim) {
+        const expanded = expandedIds.has(node.id);
+        const text = expanded ? '−' : `+${fnCount}`;
+        const fontSize = Math.max(8.5 / globalScale, 2);
+        ctx.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#f472b6';
+        ctx.shadowColor = 'rgba(0,0,0,0.9)';
+        ctx.shadowBlur = 3;
+        ctx.fillText(text, x + r + 2 / globalScale + 1, y - r);
+        ctx.shadowBlur = 0;
+      }
+
       ctx.globalAlpha = 1;
     },
-    [selectedId, highlightNodes, focusId, labelLevel],
+    [selectedId, highlightNodes, focusId, labelLevel, fnChildCount, expandedIds],
   );
 
   const paintPointerArea = useCallback(
@@ -232,6 +287,8 @@ export default function OrgGraph({
           onNodeHover={(n: GraphNode | null) => setHoverId(n ? n.id : null)}
           onNodeClick={(n: GraphNode) => {
             onSelect(n.id);
+            // Klik w węzeł z elementami funkcyjnymi rozwija / zwija je.
+            if ((fnChildCount.get(n.id) ?? 0) > 0) onToggleExpand(n.id);
             const fg = fgRef.current;
             if (fg && n.x != null && n.y != null) fg.centerAt(n.x, n.y, 500);
           }}
