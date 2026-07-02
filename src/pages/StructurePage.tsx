@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CATEGORIES, CATEGORY_MAP, type CategoryId } from '../data/categories';
 import type { OrgNode } from '../data/organization';
+import { useKnowledgeBase } from '../state/KnowledgeBaseContext';
 import { useOrgData, type NodeInput } from '../state/OrgDataContext';
 import NodeEditDialog from '../components/NodeEditDialog';
 
@@ -44,6 +46,7 @@ function Card({ node, onEdit, onDelete }: CardProps) {
 
 export default function StructurePage() {
   const { nodes, connectionsOf, parentIdOf, addNode, updateNode, deleteNode, resetToDefault } = useOrgData();
+  const { bases } = useKnowledgeBase();
   const [dialog, setDialog] = useState<{ mode: 'create' | 'edit'; category?: CategoryId; node?: OrgNode } | null>(
     null,
   );
@@ -97,6 +100,41 @@ export default function StructurePage() {
             </button>
           </div>
         </div>
+
+        <section className="section">
+          <h2 className="section__heading">
+            <span className="legend__dot" style={{ color: '#f5a623', background: '#f5a623' }} />
+            Bazy wiedzy
+          </h2>
+          <p className="section__intro">
+            Pełne opisy funkcjonalne zasilające platformę. Każda kategoria ma podstronę z pełnym
+            zakresem informacji, a narzędzie „Skanuj” zczytuje dane i uzupełnia je na mapie oraz
+            w strukturze.
+          </p>
+          <div className="card-grid">
+            {bases.map((b) => {
+              const kbEntryCount = b.categories.reduce((n, c) => n + c.entries.length, 0);
+              return (
+                <Link
+                  key={b.id}
+                  className="card card--link"
+                  style={{ borderLeftColor: '#f5a623' }}
+                  to={`/baza-wiedzy/${b.id}`}
+                >
+                  <h3 className="card__title">{b.name}</h3>
+                  <p className="card__summary">{b.description}</p>
+                  <div className="card__children">
+                    <span className="tag">{b.categories.length} kategorie</span>
+                    <span className="tag">{kbEntryCount} wpisów</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+          <Link className="btn btn--inline" to="/baza-wiedzy">
+            Zarządzaj bazami wiedzy
+          </Link>
+        </section>
 
         {CATEGORIES.map((cat) => {
           const list = nodesByCategory.get(cat.id) ?? [];
