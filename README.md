@@ -15,6 +15,9 @@ lub rozszerzyć węzły i połączenia.
 Hosting darmowy (GitHub Pages), wdrażany automatycznie po każdej zmianie na gałęzi `main`
 (workflow `.github/workflows/deploy.yml`).
 
+Baza wiedzy „Konta & Funkcje” jest zsynchronizowana 1:1 z [wiki repozytorium](https://github.com/michalox227/START-OFF/wiki) —
+pełne opisy kont z wiki zasilają mapę, strukturę i podstrony bazy wiedzy.
+
 ## Co pokazuje mapa
 
 Model to **AI-first CRM** z czterema warstwami:

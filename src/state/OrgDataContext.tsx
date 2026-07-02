@@ -18,10 +18,19 @@ import { LINKS as BASE_LINKS, NODES as BASE_NODES, type OrgLink, type OrgNode } 
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'grantland-org-data-v1';
+const FN_VERSION_KEY = 'grantland-org-fn-version';
+// Podbij po każdej aktualizacji domyślnych notatek (np. synchronizacji z wiki),
+// aby elementy funkcyjne w zapisanych danych zostały odświeżone.
+const FN_VERSION = '2-wiki';
 
 // Domyślne dane = struktura organizacji + elementy funkcyjne z bazy wiedzy.
 const DEFAULT_NODES: OrgNode[] = [...BASE_NODES, ...DEFAULT_FUNCTION_NODES];
 const DEFAULT_LINKS: OrgLink[] = [...BASE_LINKS, ...DEFAULT_FUNCTION_LINKS];
+
+// Konta, dla których istnieją domyślne elementy funkcyjne (z notatek wiki).
+const FN_ACCOUNT_IDS = [
+  ...new Set(DEFAULT_FUNCTION_NODES.map((n) => n.id.replace(/^fn-/, '').replace(/(-\d+){1,2}$/, ''))),
+];
 
 interface StoredData {
   nodes: OrgNode[];
@@ -29,19 +38,23 @@ interface StoredData {
 }
 
 /**
- * Dosiewa domyślne elementy funkcyjne do danych zapisanych przed ich
- * wprowadzeniem — tylko dla kont, które nadal istnieją w danych użytkownika.
+ * Podmienia domyślne elementy funkcyjne na bieżącą wersję (z notatek wiki) —
+ * tylko dla kont, które nadal istnieją w danych użytkownika. Elementy
+ * funkcyjne kont dodanych przez użytkownika pozostają nietknięte.
  */
 function seedFunctions(data: StoredData): StoredData {
-  if (data.nodes.some((n) => n.category === 'funkcja')) return data;
   const existingIds = new Set(data.nodes.map((n) => n.id));
+  const prefixes = FN_ACCOUNT_IDS.map((id) => `fn-${id}-`);
+  const isDefaultFn = (id: string) => prefixes.some((p) => id.startsWith(p));
+  const keptNodes = data.nodes.filter((n) => !isDefaultFn(n.id));
+  const keptLinks = data.links.filter((l) => !isDefaultFn(l.source) && !isDefaultFn(l.target));
   const nodes = DEFAULT_FUNCTION_NODES.filter((n) => {
     const rootAccount = n.id.replace(/^fn-/, '').replace(/(-\d+){1,2}$/, '');
     return existingIds.has(rootAccount);
   });
-  const nodeIds = new Set([...existingIds, ...nodes.map((n) => n.id)]);
+  const nodeIds = new Set([...keptNodes.map((n) => n.id), ...nodes.map((n) => n.id)]);
   const links = DEFAULT_FUNCTION_LINKS.filter((l) => nodeIds.has(l.source) && nodeIds.has(l.target));
-  return { nodes: [...data.nodes, ...nodes], links: [...data.links, ...links] };
+  return { nodes: [...keptNodes, ...nodes], links: [...keptLinks, ...links] };
 }
 
 function loadInitial(): StoredData {
@@ -50,7 +63,8 @@ function loadInitial(): StoredData {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<StoredData>;
       if (Array.isArray(parsed.nodes) && Array.isArray(parsed.links)) {
-        return seedFunctions({ nodes: parsed.nodes, links: parsed.links });
+        const data = { nodes: parsed.nodes, links: parsed.links };
+        return localStorage.getItem(FN_VERSION_KEY) === FN_VERSION ? data : seedFunctions(data);
       }
     }
   } catch {
@@ -103,6 +117,7 @@ export function OrgDataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ nodes, links }));
+      localStorage.setItem(FN_VERSION_KEY, FN_VERSION);
     } catch {
       /* quota / prywatny tryb przeglądarki — pomijamy */
     }

@@ -1,29 +1,5 @@
-// Notatka funkcjonalna 1:1 — Konto rekrutacyjne — Biznes.
-const note = `# GO ON Offshore
-
-# 3. Konto rekrutacyjne — Biznes
-
-# Pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore powstaje nowa kategoria kont:
-
-# Konto firmy rekrutującej
-
-Ta kategoria będzie podzielona na trzy główne podkonta:
-
-1. **Konto rekrutacyjne — Biznes**
-2. **Konto rekrutacyjne — Agencja pracy**
-3. **Konto rekrutacyjne — Headhunter / Rekruter**
-
-Ta notatka dotyczy wyłącznie pierwszego podkonta:
-
-> **3. Konto rekrutacyjne — Biznes**
-
----
-
-# 2. Główna idea Konta rekrutacyjnego — Biznes
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto rekrutacyjne — Biznes.
+const note = `# 1. Główna idea Konta rekrutacyjnego — Biznes
 
 **Konto rekrutacyjne — Biznes** będzie przeznaczone dla firm, które realizują projekty, prowadzą rekrutacje, szukają specjalistów, techników, ekspertów, zespołów wykonawczych, podwykonawców, sprzętu, usług albo innych zasobów potrzebnych do realizacji konkretnych prac.
 
@@ -46,7 +22,7 @@ Przykładowe firmy korzystające z tego konta:
 * firmy szukające specjalistów do czasowych projektów,
 * firmy kupujące sprzęt lub usługi do projektów.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Konto rekrutacyjne — Biznes pozwala firmie dodać projekt, ofertę pracy, zlecenie, zapotrzebowanie na ludzi, zapotrzebowanie na sprzęt, zapotrzebowanie na usługę albo własną ofertę świadczenia usług, a następnie zarządzać całym procesem od publikacji, przez rekrutację, komunikację, spotkania, podpisanie umów, dokumenty i analitykę.**
 

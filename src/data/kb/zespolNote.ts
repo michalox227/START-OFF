@@ -1,9 +1,5 @@
-// Notatka funkcjonalna 1:1 — Konto użytkownika — Zespół.
-const note = `# GO ON Offshore
-# 2. Konto użytkownika — Zespół
-# Pełna zbiorcza notatka funkcjonalna
-
-## 1. Główna idea konta użytkownika — Zespół
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto użytkownika — Zespół.
+const note = `# 1. Główna idea Konta Użytkownika — Zespół
 
 **Konto użytkownika — Zespół** będzie przeznaczone dla firm, spółek, działalności gospodarczych, podwykonawców, brygad, zespołów technicznych, grup specjalistów oraz organizacji, które posiadają własnych pracowników lub współpracowników i chcą zarządzać nimi w jednym miejscu.
 
@@ -518,14 +514,14 @@ Najważniejszą funkcją Konta Zespół będzie możliwość aplikowania na proj
 
 Przykład:
 
-Firma posiada 15 techników turbin wiatrowych.
-Projekt wymaga 6 techników.
+Firma posiada 15 techników turbin wiatrowych.  
+Projekt wymaga 6 techników.  
 Administrator wybiera 6 najlepiej dopasowanych osób i wysyła aplikację zbiorczą.
 
-Inny projekt wymaga 3 techników.
+Inny projekt wymaga 3 techników.  
 Administrator wybiera 3 osoby.
 
-Jeszcze inny projekt wymaga kilku stanowisk.
+Jeszcze inny projekt wymaga kilku stanowisk.  
 Administrator wybiera odpowiednie osoby z różnych kategorii zawodowych.
 
 ---

@@ -1,30 +1,9 @@
-// Notatka funkcjonalna 1:1 — Konto partnera — Konsultanci / Doradcy / Eksperci.
-const note = `# GO ON Offshore
-
-# 6. Konto partnera — Konsultanci / Doradcy / Eksperci
-
-# Wstępna pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore powstaje nowa kategoria kont:
-
-# Konto Partnera
-
-Ta kategoria będzie dzieliła się na kilka głównych typów:
-
-1. **Konto partnera — Konsultanci / Doradcy / Eksperci**
-2. **Konto partnera — Centrum szkoleniowe**
-3. **Konto partnera — Produkty i usługi**
-4. **Konto reklamodawcy**
-
-Ta notatka dotyczy pierwszego typu:
-
-> **6. Konto partnera — Konsultanci / Doradcy / Eksperci**
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto partnera — Konsultanci / Doradcy.
+const note = `# Konto Partnera - Konsultanci
 
 ---
 
-# 2. Główna idea konta partnera — Konsultanci / Doradcy / Eksperci
+# 1. Główna idea konta partnera — Konsultanci / Doradcy / Eksperci
 
 **Konto partnera — Konsultanci / Doradcy / Eksperci** będzie przeznaczone dla osób indywidualnych oraz firm, które chcą świadczyć swoje usługi dla użytkowników platformy GO ON Offshore.
 
@@ -40,7 +19,7 @@ To konto będzie umożliwiało partnerom pozyskiwanie klientów z różnych grup
 * firm usługowych,
 * reklamodawców.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Partner konsultant, doradca lub ekspert tworzy profil, przechodzi weryfikację, dodaje swoją ofertę usług, określa grupę docelową, publikuje treści, pozyskuje leady, wysyła zapytania, generuje oferty, podpisuje umowy i obsługuje klientów przez platformę.**
 

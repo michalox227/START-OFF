@@ -1,35 +1,15 @@
-// Notatka funkcjonalna 1:1 — Konto rekrutacyjne — Agencja pracy.
-const note = `# GO ON Offshore
-
-# 4. Konto rekrutacyjne — Agencja pracy
-
-# Pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore istnieje kategoria:
-
-# Konto firmy rekrutującej
-
-Ta kategoria obejmuje trzy główne podtypy:
-
-1. **Konto rekrutacyjne — Biznes**
-2. **Konto rekrutacyjne — Agencja pracy**
-3. **Konto rekrutacyjne — Headhunter / Rekruter**
-
-Ta notatka dotyczy drugiego podtypu:
-
-> **4. Konto rekrutacyjne — Agencja pracy**
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto rekrutacyjne — Agencja pracy.
+const note = `# Konto rekrutacyjne — Agencja pracy
 
 ---
 
-# 2. Główna idea Konta rekrutacyjnego — Agencja pracy
+# 1. Główna idea
 
 **Konto rekrutacyjne — Agencja pracy** będzie przeznaczone dla agencji pracy, firm rekrutacyjnych, firm outsourcingowych, firm delegujących pracowników oraz podmiotów, które zajmują się pozyskiwaniem kandydatów dla innych firm i projektów.
 
 Agencje pracy będą mogły widzieć projekty, zapotrzebowania i oferty dodawane przez firmy korzystające z **Konta rekrutacyjnego — Biznes**, a następnie rekrutować do nich odpowiednich kandydatów.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Agencja pracy widzi projekty i zapotrzebowania firm, może rekrutować do nich kandydatów, publikować oferty pracy na wielu kanałach, zarządzać procesem rekrutacji, wyceniać swoją usługę, kalkulować marżę i komunikować się z firmą oraz kandydatami w jednym systemie.**
 

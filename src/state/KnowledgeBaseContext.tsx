@@ -10,13 +10,50 @@ import { DEFAULT_BASES, type KbBase, type KbCategory, type KbEntry } from '../da
 // ---------------------------------------------------------------------------
 
 const STORAGE_KEY = 'grantland-kb-v1';
+const VERSION_KEY = 'grantland-kb-data-version';
+// Podbij po każdej aktualizacji domyślnych notatek (np. synchronizacji z wiki),
+// aby zapisane dane użytkowników dostały nową treść bez utraty ich własnych wpisów.
+const DATA_VERSION = '2-wiki';
+
+/**
+ * Odświeża domyślne bazy do bieżącej wersji: domyślne bazy/kategorie/wpisy są
+ * podmieniane na nowe, a dodane przez użytkownika — zachowywane.
+ */
+function migrate(stored: KbBase[]): KbBase[] {
+  const defaults = new Map(DEFAULT_BASES.map((b) => [b.id, b]));
+  const result: KbBase[] = DEFAULT_BASES.map((b) => ({
+    ...b,
+    categories: b.categories.map((c) => ({ ...c, entries: [...c.entries] })),
+  }));
+  for (const base of stored) {
+    const target = result.find((b) => b.id === base.id);
+    if (!defaults.has(base.id) || !target) {
+      result.push(base);
+      continue;
+    }
+    for (const category of base.categories) {
+      const targetCat = target.categories.find((c) => c.id === category.id);
+      if (!targetCat) {
+        target.categories.push(category);
+        continue;
+      }
+      for (const entry of category.entries) {
+        if (!targetCat.entries.some((e) => e.id === entry.id)) targetCat.entries.push(entry);
+      }
+    }
+  }
+  return result;
+}
 
 function loadInitial(): KbBase[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed as KbBase[];
+      if (Array.isArray(parsed)) {
+        const bases = parsed as KbBase[];
+        return localStorage.getItem(VERSION_KEY) === DATA_VERSION ? bases : migrate(bases);
+      }
     }
   } catch {
     /* uszkodzone dane w localStorage — wracamy do domyślnych */
@@ -92,6 +129,7 @@ export function KnowledgeBaseProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(bases));
+      localStorage.setItem(VERSION_KEY, DATA_VERSION);
     } catch {
       /* quota / prywatny tryb przeglądarki — pomijamy */
     }
