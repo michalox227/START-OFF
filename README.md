@@ -12,7 +12,7 @@ lub rozszerzyć węzły i połączenia.
 
 **➡️ https://michalox227.github.io/START-OFF/**
 
-Hosting darmowy (GitHub Pages), wdrażany automatycznie po każdej zmianie na gałęzi
+Hosting darmowy (GitHub Pages), wdrażany automatycznie po każdej zmianie na gałęzi `main`
 (workflow `.github/workflows/deploy.yml`).
 
 ## Co pokazuje mapa
