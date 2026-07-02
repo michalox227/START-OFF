@@ -13,7 +13,7 @@ const STORAGE_KEY = 'grantland-kb-v1';
 const VERSION_KEY = 'grantland-kb-data-version';
 // Podbij po każdej aktualizacji domyślnych notatek (np. synchronizacji z wiki),
 // aby zapisane dane użytkowników dostały nową treść bez utraty ich własnych wpisów.
-const DATA_VERSION = '2-wiki';
+const DATA_VERSION = '3-bazy';
 
 /**
  * Odświeża domyślne bazy do bieżącej wersji: domyślne bazy/kategorie/wpisy są

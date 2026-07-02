@@ -41,6 +41,10 @@ export interface KbBase {
   name: string;
   description: string;
   categories: KbCategory[];
+  /** Ścieżka względna do dołączonego narzędzia (np. wyszukiwarki zawodów). */
+  toolUrl?: string;
+  /** Etykieta przycisku otwierającego narzędzie. */
+  toolLabel?: string;
 }
 
 export const DEFAULT_BASES: KbBase[] = [
@@ -187,6 +191,142 @@ export const DEFAULT_BASES: KbBase[] = [
             nodeId: 'part-produkty',
           },
         ],
+      },
+    ],
+  },
+
+  // --- Nowe bazy wiedzy (do wypełniania) ---------------------------------
+  {
+    id: 'firmy-projekty-zawody',
+    name: 'Baza Firm & Projektów & Zawodów',
+    description:
+      'Rejestr firm, projektów i zawodów kontraktowych. Zawiera narzędzie „Filtry i wyszukiwarka zawodów” — 100 sektorów w 20 kategoriach głównych, gotowe pod docelowo 15 000 rekordów zawodów, z filtrami po kategorii, sektorze, ryzyku, certyfikatach, regionie płacowym i źródłach.',
+    toolUrl: 'bazy/zawody-filtry.html',
+    toolLabel: 'Otwórz wyszukiwarkę zawodów →',
+    categories: [
+      {
+        id: 'firmy',
+        title: 'Firmy',
+        description: 'Baza firm: klienci, kontraktorzy, dostawcy, partnerzy i konkurencja operacyjna.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'projekty',
+        title: 'Projekty',
+        description: 'Projekty i zlecenia — zakres, lokalizacje, sektory, statusy i powiązane firmy.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'zawody',
+        title: 'Zawody i sektory',
+        description:
+          'Struktura zawodów kontraktowych (100 sektorów / 20 kategorii). Pełne narzędzie filtrów i wyszukiwarki jest dostępne przyciskiem „Otwórz wyszukiwarkę zawodów”.',
+        parentNodeId: null,
+        entries: [],
+      },
+    ],
+  },
+  {
+    id: 'konkurencja',
+    name: 'Baza Konkurencji',
+    description:
+      'Analiza konkurencji: platformy, agencje, marketplace’y i firmy rekrutacyjne. Profile, mocne i słabe strony, model działania, ceny oraz przewagi GO ON [OFF] SHORE.',
+    categories: [
+      {
+        id: 'konkurenci-bezposredni',
+        title: 'Konkurenci bezpośredni',
+        description: 'Platformy i firmy działające w tym samym modelu i segmencie.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'konkurenci-posredni',
+        title: 'Konkurenci pośredni',
+        description: 'Rozwiązania częściowo zastępcze: portale pracy, agencje, ATS, marketplace’y.',
+        parentNodeId: null,
+        entries: [],
+      },
+    ],
+  },
+  {
+    id: 'linki-narzedzia',
+    name: 'Baza Linków & Narzędzi',
+    description:
+      'Zbiór linków, narzędzi, integracji, API i usług wykorzystywanych przy budowie i rozwoju platformy oraz w codziennej pracy zespołu.',
+    categories: [
+      {
+        id: 'narzedzia-produktowe',
+        title: 'Narzędzia produktowe i techniczne',
+        description: 'Hosting, repozytoria, API, integracje, biblioteki i usługi techniczne.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'narzedzia-biznesowe',
+        title: 'Narzędzia biznesowe i marketingowe',
+        description: 'CRM, analityka, marketing, komunikacja, płatności i automatyzacje.',
+        parentNodeId: null,
+        entries: [],
+      },
+    ],
+  },
+  {
+    id: 'analizy-biznesplan',
+    name: 'Analizy & Biznes Plan',
+    description:
+      'Analizy rynkowe, model biznesowy, strategia, finanse i biznesplan platformy — materiał pod inwestorów, Grantland, partnerów i zespół.',
+    categories: [
+      {
+        id: 'analiza-rynku',
+        title: 'Analiza rynku',
+        description: 'Wielkość rynku, trendy, grupy docelowe, potrzeby i luki rynkowe.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'model-biznesowy',
+        title: 'Model biznesowy i finanse',
+        description: 'Źródła przychodów, koszty, prognozy, monetyzacja i kluczowe wskaźniki.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'strategia',
+        title: 'Strategia i rozwój',
+        description: 'Roadmapa, etapy wdrożenia, ryzyka, przewagi i plan skalowania.',
+        parentNodeId: null,
+        entries: [],
+      },
+    ],
+  },
+  {
+    id: 'pliki-media',
+    name: 'Baza Plików & Zdjęć & Video & Dokumentów',
+    description:
+      'Repozytorium materiałów: dokumenty, grafiki, zdjęcia, wideo, prezentacje i pliki źródłowe wykorzystywane w projekcie i komunikacji.',
+    categories: [
+      {
+        id: 'dokumenty',
+        title: 'Dokumenty',
+        description: 'Umowy, regulaminy, specyfikacje, notatki i dokumentacja projektowa.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'grafiki-zdjecia',
+        title: 'Grafiki i zdjęcia',
+        description: 'Logotypy, materiały brandingowe, zdjęcia, ikony i grafiki marketingowe.',
+        parentNodeId: null,
+        entries: [],
+      },
+      {
+        id: 'video-prezentacje',
+        title: 'Wideo i prezentacje',
+        description: 'Nagrania, prezentacje, pitch decki i materiały wideo.',
+        parentNodeId: null,
+        entries: [],
       },
     ],
   },

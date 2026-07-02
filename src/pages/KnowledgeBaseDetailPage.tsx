@@ -320,6 +320,16 @@ export default function KnowledgeBaseDetailPage() {
               Skanuj → platforma
             </button>
           </div>
+          {base.toolUrl && (
+            <a
+              className="btn btn--tool kb__tool-btn"
+              href={`${import.meta.env.BASE_URL}${base.toolUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {base.toolLabel ?? 'Otwórz narzędzie →'}
+            </a>
+          )}
         </div>
 
         {base.categories.map((category) => (

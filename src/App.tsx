@@ -1,13 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
+import LoginScreen from './components/LoginScreen';
 import KnowledgeBaseDetailPage from './pages/KnowledgeBaseDetailPage';
 import KnowledgeBasePage from './pages/KnowledgeBasePage';
 import MapPage from './pages/MapPage';
 import StructurePage from './pages/StructurePage';
+import { AuthProvider, useAuth } from './state/AuthContext';
 import { KnowledgeBaseProvider } from './state/KnowledgeBaseContext';
 import { OrgDataProvider } from './state/OrgDataContext';
 
-export default function App() {
+function Platform() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) return <LoginScreen />;
+
   return (
     <OrgDataProvider>
       <KnowledgeBaseProvider>
@@ -25,5 +31,13 @@ export default function App() {
         </div>
       </KnowledgeBaseProvider>
     </OrgDataProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Platform />
+    </AuthProvider>
   );
 }

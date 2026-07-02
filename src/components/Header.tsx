@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../state/AuthContext';
 
 export default function Header() {
+  const { logout } = useAuth();
+
   return (
     <header className="app__header">
       <div className="brand">
@@ -30,6 +33,9 @@ export default function Header() {
         >
           Baza wiedzy
         </NavLink>
+        <button className="nav__link nav__logout" onClick={logout} title="Wyloguj się z platformy">
+          Wyloguj
+        </button>
       </nav>
     </header>
   );
