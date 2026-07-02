@@ -1,34 +1,14 @@
-// Notatka funkcjonalna 1:1 — Konto partnera — Centrum szkoleniowe.
-const note = `# GO ON Offshore
-# 7. Konto partnera — Centrum szkoleniowe
-# Pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore istnieje kategoria:
-
-# Konto Partnera
-
-Ta kategoria obejmuje:
-
-1. **Konto partnera — Konsultanci / Doradcy / Eksperci**
-2. **Konto partnera — Centrum szkoleniowe**
-3. **Konto partnera — Produkty i usługi**
-4. **Konto reklamodawcy**
-
-Ta notatka dotyczy drugiego typu:
-
-> **7. Konto partnera — Centrum szkoleniowe**
-
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto partnera — Centrum szkoleniowe.
+const note = `#  Konto Partnera - Centrum szkoleniowe
 ---
 
-# 2. Główna idea konta Centrum szkoleniowe
+# 1. Główna idea konta Centrum szkoleniowe
 
 **Konto partnera — Centrum szkoleniowe** będzie przeznaczone dla firm, instytucji, szkół i organizacji, które świadczą usługi związane z rozwojem kompetencji zawodowych, zdobywaniem uprawnień, certyfikatów, kwalifikacji, kursów oraz szkoleń.
 
 To konto będzie mogła założyć każda firma lub placówka, która pomaga użytkownikom zdobywać kompetencje potrzebne do pracy w projektach offshore, onshore, przemysłowych, technicznych, energetycznych, wysokościowych, morskich, stoczniowych i wysokiego ryzyka.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Centrum szkoleniowe publikuje swoją ofertę kursów, certyfikatów, konsultacji i materiałów edukacyjnych, a platforma dopasowuje te szkolenia do użytkowników oraz firm, którym brakuje konkretnych uprawnień do udziału w projektach.**
 
@@ -336,8 +316,8 @@ Konto Zespół oraz firmy rekrutacyjne będą mogły kupować szkolenia zbiorczo
 
 Przykład:
 
-Firma ma 8 pracowników, którym brakuje certyfikatu wymaganego do projektu.
-System pokazuje centrum szkoleniowe, które ma najbliższy termin i 8 wolnych miejsc.
+Firma ma 8 pracowników, którym brakuje certyfikatu wymaganego do projektu.  
+System pokazuje centrum szkoleniowe, które ma najbliższy termin i 8 wolnych miejsc.  
 Administrator kupuje szkolenie zbiorczo dla wybranych osób.
 
 ---

@@ -48,7 +48,7 @@ export const DEFAULT_BASES: KbBase[] = [
     id: 'konta-funkcje',
     name: 'Konta & Funkcje',
     description:
-      'Pełne notatki funkcjonalne wszystkich typów kont platformy GO ON [OFF] SHORE — od kont użytkowników, przez konta rekrutacyjne, po konta partnerów. Narzędzie „Skanuj” zczytuje te dane i uzupełnia je w całej platformie (mapa + struktura).',
+      'Pełne notatki funkcjonalne wszystkich typów kont platformy GO ON [OFF] SHORE — od kont użytkowników, przez konta rekrutacyjne, po konta partnerów. Treści są zsynchronizowane 1:1 z wiki repozytorium, a narzędzie „Skanuj” zczytuje je i uzupełnia w całej platformie (mapa + struktura).',
     categories: [
       {
         id: 'konto-uzytkownika',
@@ -60,7 +60,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-uzytkownika-solo',
             title: 'Konto użytkownika — Solo',
             short: 'Indywidualny profil specjalisty, kandydata, kontraktora lub freelancera.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: soloNote,
             summary: [
               'Profil zawodowy i dokumenty użytkownika.',
@@ -74,7 +74,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-uzytkownika-zespol',
             title: 'Konto użytkownika — Zespół',
             short: 'Konto dla firm i zespołów, które aplikują zbiorczo na projekty.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: zespolNote,
             summary: [
               'Profil firmy i zapraszanie pracowników linkiem.',
@@ -97,7 +97,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-rekrutacyjne-biznes',
             title: 'Konto rekrutacyjne — Biznes',
             short: 'Dla firm realizujących projekty i szukających ludzi, zespołów, usług lub sprzętu.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: biznesNote,
             summary: [
               'Dodawanie ofert pracy, zleceń i zapotrzebowań projektowych.',
@@ -111,7 +111,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-rekrutacyjne-agencja-pracy',
             title: 'Konto rekrutacyjne — Agencja pracy',
             short: 'Dla agencji pracy rekrutujących kandydatów do projektów firm.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: agencjaNote,
             summary: [
               'Dostęp do projektów firm i obsługa rekrutacji.',
@@ -125,7 +125,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-rekrutacyjne-headhunter',
             title: 'Konto rekrutacyjne — Headhunter / Rekruter',
             short: 'Dla indywidualnych rekruterów i headhunterów działających samodzielnie.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: headhunterNote,
             summary: [
               'Indywidualny profil rekrutera i własna baza kandydatów.',
@@ -148,7 +148,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-partnera-konsultanci',
             title: 'Konto partnera — Konsultanci / Doradcy / Eksperci',
             short: 'Dla osób i firm świadczących usługi doradcze, konsultacyjne i eksperckie.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: konsultanciNote,
             summary: [
               'Profil partnera, weryfikacja i oferta usług.',
@@ -162,7 +162,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-partnera-centrum-szkoleniowe',
             title: 'Konto partnera — Centrum szkoleniowe',
             short: 'Dla firm szkoleniowych, certyfikacyjnych, szkół i ośrodków kursowych.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: szkolenioweNote,
             summary: [
               'Oferta kursów, szkoleń, certyfikatów i uprawnień.',
@@ -176,7 +176,7 @@ export const DEFAULT_BASES: KbBase[] = [
             id: 'konto-partnera-produkty-uslugi',
             title: 'Konto partnera — Produkty i usługi',
             short: 'Dla marek, sklepów, dostawców, producentów i usługodawców.',
-            status: 'Notatka dodana 1:1',
+            status: 'Notatka z wiki (1:1)',
             note: produktyNote,
             summary: [
               'Profil firmy i katalog produktów/usług.',

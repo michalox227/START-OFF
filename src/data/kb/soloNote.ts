@@ -1,10 +1,7 @@
-// Notatka funkcjonalna 1:1 — Konto użytkownika — Solo.
-const note = `# GO ON Offshore
-# Konto Użytkownika Solo — pełna zaawansowana notatka funkcjonalna
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto użytkownika — Solo.
+const note = `# 1. Główna idea Konta Użytkownika Solo
 
-## 1. Główna idea Konta Użytkownika Solo
-
-**Konto Użytkownika Solo** w platformie **GO ON Offshore** będzie przeznaczone dla pojedynczego specjalisty, zleceniobiorcy, kandydata, kontraktora, freelancera, osoby samozatrudnionej lub osoby szukającej pracy, projektu, zlecenia, szkolenia, certyfikatu, konsultacji, produktu albo usługi branżowej.
+Konto Użytkownika Solo w platformie GO ON [OFF] SHORE będzie przeznaczone dla pojedynczego specjalisty, zleceniobiorcy, kandydata, kontraktora, freelancera, osoby samozatrudnionej lub osoby szukającej pracy, projektu, zlecenia, szkolenia, certyfikatu, konsultacji, produktu albo usługi branżowej.
 
 Nie będzie to zwykły profil kandydata ani klasyczne konto użytkownika. Konto Solo ma działać jako osobisty system operacyjny użytkownika, który łączy w jednym miejscu:
 
@@ -432,7 +429,7 @@ Możliwe warianty:
 - aplikacja z ostrzeżeniem o brakach,
 - aplikacja z rekomendacją agenta AI.
 
-Jeżeli profil jest kompletny i spełnia wymagania, użytkownik może aplikować szybko.
+Jeżeli profil jest kompletny i spełnia wymagania, użytkownik może aplikować szybko.  
 Jeżeli czegoś brakuje, system pokazuje brakujące elementy.
 
 ---
@@ -547,7 +544,7 @@ Jeżeli użytkownik nie spełnia wymagań oferty, system pokazuje, czego brakuje
 
 Przykład:
 
-Oferta: Technik turbin wiatrowych offshore
+Oferta: Technik turbin wiatrowych offshore  
 Dopasowanie: 75%
 
 Brakuje:

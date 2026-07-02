@@ -1,36 +1,14 @@
-// Notatka funkcjonalna 1:1 — Konto partnera — Produkty i usługi.
-const note = `# GO ON Offshore
-
-# 8. Konto partnera — Produkty i usługi
-
-# Pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore istnieje kategoria:
-
-# Konto Partnera
-
-Ta kategoria obejmuje:
-
-1. **Konto partnera — Konsultanci / Doradcy / Eksperci**
-2. **Konto partnera — Centrum szkoleniowe**
-3. **Konto partnera — Produkty i usługi**
-4. **Konto reklamodawcy**
-
-Ta notatka dotyczy trzeciego typu:
-
-> **8. Konto partnera — Produkty i usługi**
-
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto partnera — Produkty & Usługi.
+const note = `# 8. Konto Partnera - Produkty & Usługi
 ---
 
-# 2. Główna idea konta Produkty i usługi
+# 1. Główna idea konta Produkty i usługi
 
 **Konto partnera — Produkty i usługi** będzie przeznaczone dla firm, marek, dostawców, sklepów, producentów, dystrybutorów, wypożyczalni oraz usługodawców, którzy chcą sprzedawać lub wynajmować swoje produkty i usługi użytkownikom platformy GO ON Offshore.
 
 To konto będzie działało jak branżowy marketplace połączony z systemem sprzedaży, analityki, promocji i obsługi zamówień.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Firma tworzy profil, dodaje produkty lub usługi, ustala ceny, konfiguruje sprzedaż, realizację, wysyłkę lub wynajem, a następnie sprzedaje swoje rozwiązania użytkownikom platformy przez model marketplace/dropshipping.**
 

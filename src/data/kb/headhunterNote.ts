@@ -1,35 +1,15 @@
-// Notatka funkcjonalna 1:1 — Konto rekrutacyjne — Headhunter / Rekruter.
-const note = `# GO ON Offshore
-
-# 5. Konto rekrutacyjne — Headhunter / Rekruter
-
-# Pełna notatka funkcjonalna
-
-## 1. Miejsce tej notatki w strukturze projektu
-
-W projekcie GO ON Offshore istnieje kategoria:
-
-# Konto firmy rekrutującej
-
-Ta kategoria obejmuje trzy główne podtypy:
-
-1. **Konto rekrutacyjne — Biznes**
-2. **Konto rekrutacyjne — Agencja pracy**
-3. **Konto rekrutacyjne — Headhunter / Rekruter**
-
-Ta notatka dotyczy trzeciego podtypu:
-
-> **5. Konto rekrutacyjne — Headhunter / Rekruter**
+// Notatka funkcjonalna 1:1 z wiki repozytorium — Konto rekrutacyjne — Headhunter.
+const note = `# Konto rekrutacyjne - Headhunter
 
 ---
 
-# 2. Główna idea konta Headhunter / Rekruter
+# 1. Główna idea konta:
 
 **Konto rekrutacyjne — Headhunter / Rekruter** będzie przeznaczone dla indywidualnych rekruterów, headhunterów, freelancerów rekrutacyjnych, sourcerów oraz osób prowadzących jednoosobową działalność gospodarczą, które pozyskują kandydatów dla firm, projektów, zleceń i kontraktów.
 
 To konto będzie podobne funkcjonalnie do **Konta rekrutacyjnego — Agencja pracy**, ale będzie uproszczone i dostosowane do pracy jednej osoby lub bardzo małego zespołu.
 
-Główna idea:
+# 2. Główna idea:
 
 > **Headhunter lub rekruter indywidualny może znaleźć projekt, zgłosić się do obsługi rekrutacji, pozyskiwać kandydatów, prowadzić pipeline, komunikować się z firmą i kandydatami, kalkulować prowizję, podpisywać umowy i zarządzać całą swoją pracą z jednego panelu.**
 
